@@ -162,22 +162,33 @@ class Exploration{
 }
 
 class ErrorTreatment{
+    int x;
+    int y;
+    int height;
+    int width;
 
-    void treatInicialPosition(int x, int y, int height, int width){
-        if(height <= 0 || width <= 0){
+    void treatInicialPosition(int flag){
+        if(this.height <= 0 || this.width <= 0 && flag == 0){
             System.out.print("\n==========================================================================================\n");
             System.out.print("Parece que algum buraco negro destruiu as dimensões de Marte! São inválidas ou nulas :(\n");
             System.out.print("==========================================================================================\n");
 
         }
-        else if(x > width || y > height || x < 0 || y < 0){
+        else if(this.x > this.width || this.y > this.height || this.x < 0 || this.y < 0){
             System.out.print("\n===================================================================================\n");
             System.out.print("Parece que a nave nem Marte está explorando mais! Acabou saindo do perímetro :(\n");
             System.out.print("===================================================================================\n");
         }
+    }
 
+    void setXY(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
 
-
+    void setHeightWidth(int height,int width){
+        this.height = height;
+        this.width = width;
     }
 
 }
@@ -194,17 +205,35 @@ class Crash{
         this.y = y;
     }
 
-    void checkCrashes(ArrayList <Crash> crash){
+    void checkCrashes(ArrayList <Crash> crash, ArrayList <ErrorTreatment> errors){
         int flag = 0;
-        for(int i = 0; i < crash.size(); i++){
-            for(int j = i; j < crash.size(); j++){
-                if(crash.get(i).x == crash.get(j).x && crash.get(i).y == crash.get(j).y && flag == 0){
+        if(errors.get(0).height <= 0 || errors.get(0).width <= 0){
+            flag = 1;
+            System.out.print("\n==========================================================================================\n");
+            System.out.print("Parece que algum buraco negro destruiu as dimensões de Marte! São inválidas ou nulas :(\n");
+            System.out.print("==========================================================================================\n");
+
+        }
+        if(flag == 0){
+            for(int i = 0; i < crash.size(); i++){
+                if(errors.get(i).x > errors.get(i).width || errors.get(i).y > errors.get(i).height || errors.get(i).x < 0 || errors.get(i).y < 0 && flag == 0){
                     flag = 1;
-                    System.out.print("\n==========================================================================================\n");
-                    System.out.print("A exploração em Marte não foi bem sucedida :( As naves acabaram se chocando :O\n");
-                    System.out.print("==========================================================================================\n");
+                    System.out.print("\n===================================================================================\n");
+                    System.out.print("Parece que a nave nem Marte está explorando mais! Acabou saindo do perímetro :(\n");
+                    System.out.print("===================================================================================\n");
                 }
+                for(int j = i; j < crash.size(); j++){
+                    if(crash.get(i).x == crash.get(j).x && crash.get(i).y == crash.get(j).y && flag == 0){
+                        flag = 1;
+                        System.out.print("\n==========================================================================================\n");
+                        System.out.print("A exploração em Marte não foi bem sucedida :( As naves acabaram se chocando :O\n");
+                        System.out.print("==========================================================================================\n");
+                    }
+    
+                }
+    
             }
+
         }
     }
 }
@@ -247,6 +276,7 @@ public class Code {
         }while (s.hasNextLine());
 
         ArrayList<Crash> crashes = new ArrayList<Crash>();
+        ArrayList<ErrorTreatment> errors = new ArrayList<ErrorTreatment>();
         Crash shipsCrash = new Crash();
 
         for(int i = 0; i < allShips.size(); i++){
@@ -255,13 +285,15 @@ public class Code {
             System.out.print("\n");
             System.out.print("Nave " + (i + 1) + ": " + allExplorationInfo.get(i).finalPosition(allShips.get(i).direction, allShips.get(i).x0, allShips.get(i).y0, allExplorationInfo.get(i).height, allExplorationInfo.get(i).width));
             System.out.print("\n");
-            error.treatInicialPosition(allExplorationInfo.get(i).getFinalX(), allExplorationInfo.get(i).getFinalY(), allExplorationInfo.get(i).height, allExplorationInfo.get(i).width);
             shipPosition.setX(allExplorationInfo.get(i).getFinalX());
             shipPosition.setY(allExplorationInfo.get(i).getFinalY());
+            error.setXY(allExplorationInfo.get(i).getFinalX(), allExplorationInfo.get(i).getFinalY());
+            error.setHeightWidth(allExplorationInfo.get(i).height, allExplorationInfo.get(i).width);
             crashes.add(shipPosition);
+            errors.add(error);
         }
 
-        shipsCrash.checkCrashes(crashes);
+        shipsCrash.checkCrashes(crashes, errors);
 
 
 
