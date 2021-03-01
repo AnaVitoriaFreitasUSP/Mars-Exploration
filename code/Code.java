@@ -1,8 +1,11 @@
 import java.util.*;
 
+import javax.management.RuntimeErrorException;
+
 class ShipInfo{
     int x0;
     int y0;
+    // Position initial = new Position(x0, y0);
     char direction;
 
     void setX0(int x){
@@ -16,6 +19,90 @@ class ShipInfo{
     void setDirection(String direction){
         this.direction = direction.charAt(1);
     }
+}
+
+class Position{
+    private int x;
+    private int y;
+
+    Position(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+
+    Position moveNaDirecao(Direcao direcao){
+        int xFinal = this.x;
+        int yFinal = this.y;
+        if(direcao == Direcao.N){
+            yFinal += 1;
+        }else if(direcao == Direcao.E){
+            xFinal += 1;
+        }else if(direcao == Direcao.S){
+            yFinal -= 1;
+        }else{
+            xFinal -= 1;
+        }
+
+        return new Position(xFinal, yFinal);
+
+    }
+
+    boolean estaoNaMesmaPosicao(Position p){
+        if(this.x == p.getX() && this.y == p.getY()){
+            return true;
+        }
+
+        return false;
+    }
+
+    int getX(){
+        return this.x;
+    }
+
+    int getY(){
+        return this.y;
+    }
+
+}
+
+class Pessoa{
+    String nome;
+    Pessoa melhorAmigo;
+
+}
+
+class Direcao{
+    public static final Direcao N = new Direcao('n');
+    public static final Direcao E = new Direcao('e');
+    public static final Direcao S = new Direcao('s');
+    public static final Direcao W = new Direcao('w');
+
+    private char valor;
+
+    private Direcao(char valor){
+        this.valor = valor;
+    }
+
+    char getValor(){
+        return this.valor;
+    }
+
+    static Direcao from (char aleatorio){
+        if(aleatorio == 'n'){
+            return Direcao.N;
+        }else if(aleatorio == 'e'){
+            return Direcao.E;
+        }else if(aleatorio == 's'){
+            return Direcao.S;
+        }else if(aleatorio == 'w'){
+            return Direcao.W;
+        }else{
+            throw new RuntimeException();
+        }
+    }
+
+
+
 }
 
 class Direction{
@@ -69,7 +156,7 @@ class Direction{
             coordinates[1] = y;
         }else if(direction == 's'){
             coordinates[0] = x;
-            coordinates[1] = y -1;
+            coordinates[1] = y - 1;
         }else{
             coordinates[0] = x - 1;
             coordinates[1] = y;
@@ -240,6 +327,13 @@ class Crash{
 
 public class Code {
     public static void main(String[] args) {
+        char aleatorio = 'k';
+        Direcao d = Direcao.from(aleatorio);
+        Position p1 = new Position(2, 3);
+        Position p2 = new Position(2, 3);
+        Direcao direcao = new Direcao(Direcao.N);
+        p1.estaoNaMesmaPosicao(p2);
+        p1.moveNaDirecao(direcao);
 
         Scanner s = new Scanner(System.in);
 
@@ -294,8 +388,6 @@ public class Code {
         }
 
         shipsCrash.checkCrashes(crashes, errors);
-
-
 
 
         s.close();
